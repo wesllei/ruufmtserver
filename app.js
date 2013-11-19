@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -8,11 +7,24 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var gcm = require('node-gcm');
+var mongoose = require('mongoose');
+var cronjob = require('./lib/cronjob.js');
+var scrape = require('./lib/scrapecardapio.js');
+var processCardapio = require('./lib/processcardapio.js');
+
+mongoose.connect('mongodb://localhost/ruufmt');
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+  // yay!
+});
 
 var app = express();
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 8000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -25,12 +37,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+	app.use(express.errorHandler());
 }
 
 app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/user/add/:id', user.list);
 
-http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+//Models
+
+
+
+//Cron job
+var job = new cronjob();
+job.start(scrape);
+
+
+http.createServer(app).listen(app.get('port'), function() {
+	console.log('Express server listening on port ' + app.get('port'));
 });
