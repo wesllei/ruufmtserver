@@ -3,20 +3,6 @@
 *.pyo
 .settings/
 .project
-system/
-.travis.yml
-license.txt
 
-application/cache/
-application/logs/
-application/config/database.php
-
-
-application/cache/*
-!application/cache/index.html
-!application/cache/.htaccess
-
-application/logs/*
-!application/logs/index.html
-!application/logs/.htaccess
+node_modules/
 
