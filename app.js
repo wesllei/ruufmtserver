@@ -5,6 +5,7 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var cardapio = require('./routes/cardapio');
 var http = require('http');
 var path = require('path');
 var gcm = require('node-gcm');
@@ -25,6 +26,7 @@ var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 8000);
+app.set('domain', '192.168.96.99');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -40,8 +42,11 @@ if ('development' == app.get('env')) {
 	app.use(express.errorHandler());
 }
 
+
+//mapping
 app.get('/', routes.index);
-app.get('/user/add/:id', user.list);
+app.get('/user/add/:id', user.add);
+app.get('/cardapio/last', cardapio.last);
 
 //Models
 
@@ -53,5 +58,5 @@ job.start(scrape);
 
 
 http.createServer(app).listen(app.get('port'), function() {
-	console.log('Express server listening on port ' + app.get('port'));
+	console.log('Express server listening on port ' +app.get('ip')+':'+app.get('port'));
 });

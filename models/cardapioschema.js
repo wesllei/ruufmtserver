@@ -1,13 +1,21 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var cardapioSchema = new Schema({
+var CardapioSchema = new Schema({
 	date : String,
-	scrape : Object
+	cardapio : Object
 });
-cardapioSchema.statics.findByScrape = function(data, cb) {
+CardapioSchema.statics.findByScrape = function(data, cb) {
 	this.find({
-		'date' : new RegExp(data, 'i')
+		'date' : data
 	}, cb);
 }
-module.exports = cardapioSchema;
+CardapioSchema.statics.getLast = function(cb) {
+	this.find().sort({'date':'descending'}).limit(1).find(cb);
+}
+CardapioSchema.statics.drop = function(data, cb) {
+	mongoose.connection.collections[this.collection].drop(function(err) {
+		console.log('collection dropped');
+	});
+}
+module.exports = CardapioSchema;
