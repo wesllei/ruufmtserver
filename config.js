@@ -1,4 +1,4 @@
 var config = {
-	gcmSender : 'Google GCM Key'
+	gcmSender : 'AIzaSyBJYaPxgVURd2Cvc6nJIegkUEe6EZ1XNnc'
 };
 module.exports = config;
