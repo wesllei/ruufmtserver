@@ -1,8 +1,8 @@
 var config = {
     db: {
-        host: 'localhost',
-        user: 'ruufmt',
-        pass: '2QK^!BFSEdjz3VBu',
+        host: '127.5.167.2',
+        user: 'adminrRH4x1R',
+        pass: '4DppeyDxGSWM',
         db: 'ruufmt'
     },
     sc: {
