@@ -1,62 +1,68 @@
-/**
- * Module dependencies.
- */
-
 var express = require('express');
-var routes = require('./routes');
-var user = require('./routes/user');
-var cardapio = require('./routes/cardapio');
-var http = require('http');
 var path = require('path');
-var gcm = require('node-gcm');
-var mongoose = require('mongoose');
-var cronjob = require('./lib/cronjob.js');
-var scrape = require('./lib/scrapecardapio.js');
-var processCardapio = require('./lib/processcardapio.js');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 
-mongoose.connect('mongodb://localhost/ruufmt');
-
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function callback () {
-  // yay!
-});
+var routes = require('./routes/index');
+var users = require('./routes/users');
+var data = require('./routes/data');
+var config = require('./config');
+var job = require('./cron/mainjob')();
 
 var app = express();
 
-// all environments
-app.set('port', process.env.PORT || 8000);
-app.set('domain', '192.168.96.99');
+var Gcm = require('./libs/gcm');
+var gcm = new Gcm();
+gcm.send("Uma mensagem bem maior",['APA91bHfCj8_ONMWA34A-qjdq5pmJhIOD3aByu72YwJFphNtwM2aImcpbE0GqOHr40HszncqPIV43QFN6U_ga27PYEtH7lPJHGN-IuU9makJHQoxXFW7vM8Oohwe4XjxP6yIZTPMQlGqEet8hOmmj1Mlq2qFSYDZvA'])
+
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.methodOverride());
-app.use(app.router);
+
+// uncomment after placing your favicon in /public
+//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(require('less-middleware')(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// development only
-if ('development' == app.get('env')) {
-	app.use(express.errorHandler());
+app.use('/', routes);
+app.use('/users', users);
+app.use('/data', data);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
 }
 
-
-//mapping
-app.get('/', routes.index);
-app.get('/user/add/:id', user.add);
-app.get('/cardapio/last', cardapio.last);
-
-//Models
-
-
-
-//Cron job
-var job = new cronjob();
-job.start(scrape);
-
-
-http.createServer(app).listen(app.get('port'), function() {
-	console.log('Express server listening on port ' +app.get('ip')+':'+app.get('port'));
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
 });
+
+module.exports = app;
