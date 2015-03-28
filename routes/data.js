@@ -10,8 +10,8 @@ router.get('/', function (req, res, next) {
     lunch.getLast(function(){
         dinner.getLast(function(){
             var data = {}
-            data.lunch = lunch.getPureData(false);
-            data.dinner = dinner.getPureData(false);
+            data.lunch = lunch.getPureData(true);
+            data.dinner = dinner.getPureData(true);
             res.json(data);
         })
     })
