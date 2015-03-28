@@ -14,7 +14,7 @@ var config = {
         htmlEncoding: "utf-8"
     },
     gcm:{
-        apiKey:'AIzaSyB1TOjMof7QufPKPfoPbjBnEX8Hu-HUF0c'
+        apiKey:'AIzaSyDYTD1aoif4g__MVAtgTjAtczRjfdRvj5Q'
     }
 }
 module.exports = config;

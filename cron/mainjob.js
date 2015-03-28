@@ -4,7 +4,7 @@ var request = require('request');
 var config = require('../config');
 
 var mainjob = function () {
-    this.job = new CronJob('00 0-30 8-12 * * 1-5', function () {
+    this.job = new CronJob('00 5 8-13 * * 1-5', function () {
     //var job = new CronJob('1-60 * * * * *', function () {
         var http = require("http");
         var options = {

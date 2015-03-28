@@ -13,10 +13,6 @@ var job = require('./cron/mainjob')();
 
 var app = express();
 
-var Gcm = require('./libs/gcm');
-var gcm = new Gcm();
-gcm.send("Uma mensagem bem maior",['APA91bHfCj8_ONMWA34A-qjdq5pmJhIOD3aByu72YwJFphNtwM2aImcpbE0GqOHr40HszncqPIV43QFN6U_ga27PYEtH7lPJHGN-IuU9makJHQoxXFW7vM8Oohwe4XjxP6yIZTPMQlGqEet8hOmmj1Mlq2qFSYDZvA'])
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

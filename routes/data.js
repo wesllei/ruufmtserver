@@ -16,5 +16,21 @@ router.get('/', function (req, res, next) {
         })
     })
 });
-
+router.get('/refresh', function (req, res, next) {
+    var scraper = require('../libs/scraper');
+    var request = require('request');
+    var config = require('../config');
+    var http = require("http");
+        var options = {
+            uri: config.sc.url,
+            headers: config.sc.htmlHeader,
+            encoding: config.sc.htmlEncoding
+        };
+        request(options, function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                scraper(body);
+                res.jsonp({message:"refresh in curse"})
+            }
+        });
+});
 module.exports = router;
