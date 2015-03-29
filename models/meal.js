@@ -21,11 +21,13 @@ function Meal(type) {
 }
 
 Meal.prototype.save = function (callback) {
-    this.dbCon.query('INSERT INTO meal SET ?', this.getPureData(true), function (err, result){
-        if (err) throw err;
+    this.dbCon.query('INSERT INTO meal SET ?', this.getPureData(true), function (err, result) {
+        if (err)
+            console.log(err)
+        callback();
     })
-    this.dbCon.end(function(err){
-        if (err) throw err;
+    this.dbCon.end(function (err) {
+        if (err);
     });
 }
 
@@ -64,7 +66,7 @@ Meal.prototype.getLast = function (callback) {
         };
         callback();
     })
-    this.dbCon.end(function(err){
+    this.dbCon.end(function (err) {
         if (err) throw err;
     });
 }

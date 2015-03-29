@@ -1,5 +1,5 @@
 var CronJob = require('cron').CronJob;
-var scraper = require('../libs/scraper');
+var Scraper = require('../libs/scraper');
 var request = require('request');
 var config = require('../config');
 
@@ -14,7 +14,10 @@ var mainjob = function () {
         };
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
-                scraper(body);
+                var scrape = new Scraper(body);
+                console.log("aqui");
+                scrape.proccess();
+                console.log("aqui2");
             }
         });
     }, null, true, null);

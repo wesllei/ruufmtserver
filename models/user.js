@@ -35,8 +35,7 @@ User.prototype.save = function (callback) {
                 }
             })
         }
-        context.dbCon.end(function (err) {
-        });
+        context.dbCon.end(function (err) {});
     });
 }
 
@@ -47,5 +46,18 @@ User.prototype.getPureData = function (date) {
         notify: this.notify,
     }
     return pure;
+}
+
+User.prototype.getAll = function (callback) {
+    var context = this;
+    context.dbCon.query('SELECT * FROM user', function (err, result) {
+        if (err) {
+            console.log(err);
+            callback([])
+        } else {
+            callback(result);
+        }
+    })
+    context.dbCon.end(function (err) {});
 }
 module.exports = User;
