@@ -49,7 +49,7 @@ Meal.prototype.getPureData = function (date) {
 
 Meal.prototype.getLast = function (callback) {
     var scope = this;
-    var query = this.dbCon.query('SELECT * FROM meal WHERE type = ? LIMIT 1', scope.type, function (err, result) {
+    var query = this.dbCon.query('SELECT * FROM meal WHERE type = ? ORDER BY date DESC LIMIT 1', scope.type, function (err, result) {
         if (err) {
             throw err
         } else {
