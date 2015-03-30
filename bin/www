@@ -9,13 +9,13 @@ var debug = require('debug')('ruufmtserver:server');
 var http = require('http');
 
 /**
- * Get port from environment and store in Express.
+ * Get port from environment and store in Express
  */
  
-var ipaddress = normalizePort(process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1');
-var port = 80
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 80;
 
-app.set('port', port);
+app.set('port', port || '80');
 
 /**
  * Create HTTP server.
