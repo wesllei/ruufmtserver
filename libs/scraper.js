@@ -22,7 +22,7 @@ Scraper.prototype.formatItem = function (string, name) {
 Scraper.prototype.getDateFromString = function (str) {
     var myRegexp = /([0-3]{1}[0-9]{1}\/[0-1]{1}[0-9]{1}\/\d{4})/g;
     var match = myRegexp.exec(str);
-    if (match.length > 0) {
+    if (match != null && match.length > 0) {
         var splitedDate = match[0].split('/');
         if (splitedDate.length == 3) {
             return splitedDate[2] + '-' + splitedDate[1] + '-' + splitedDate[0]
@@ -39,6 +39,7 @@ Scraper.prototype.proccess = function () {
             scope.lastSaturday.getLast(function () {
                 var lunchStatus = false;
                 var dinnerStatus = false;
+                var saturdayStatus = false;
                 scope.$('#secao > *').each(function (i, v) {
                     if (scope.$(v).text().toLowerCase().trim() == 'almoço') {
                         type = 0
@@ -58,7 +59,7 @@ Scraper.prototype.proccess = function () {
                             dinnerStatus = scope.processTable(v, scope.dinner);
                         }
                         if (type == 2) {
-                            dinnerStatus = scope.processTable(v, scope.saturday, saturdayDate);
+                            saturdayStatus = scope.processTable(v, scope.saturday, saturdayDate);
                         }
                         type = null;
                     }
@@ -67,6 +68,9 @@ Scraper.prototype.proccess = function () {
                         scope.date = scope.getDateFromString(scope.$(v).text())
                     }
                 });
+                if(lunchStatus || dinnerStatus || saturdayStatus){
+                    scope.notify();
+                }
             });
         });
     });
@@ -110,31 +114,28 @@ Scraper.prototype.processTable = function (table, meal, tDate) {
 
     if (meal.type == 0 && !meal.isEqual(this.lastLunch)) {
         meal.save(function () {
-            scope.notify();
+            scope.isNotify = true;
         });
         return true;
     }
     if (meal.type == 1 && !meal.isEqual(this.lastDinner)) {
         meal.save(function () {
-            scope.notify();
+            scope.isNotify = true;
         });
         return true;
     }
 
-    if (meal.type == 2 && !meal.isEqual(this.lastSaturday)) {
+    if (meal.type == 2 && meal.pp != '' && !meal.isEqual(this.lastSaturday)) {
         meal.save(function () {
-            scope.notify();
+            scope.isNotify = true;
         });
         return true;
     }
 }
 
 Scraper.prototype.notify = function() {
-    if (this.isNotify) {
-        return;
-    }
     console.log("bacon");
-    this.isNotify = true;
+    this.isNotify = false;
     var GcmCore = require('./gcm');
     var gcm = new GcmCore();
     gcm.send("Confira o novo cardápio.");
