@@ -23,7 +23,7 @@ Gcm.prototype.send = function (text) {
             var message = new GcmCore.Message({
                 collapseKey: 'demo',
                 delayWhileIdle: true,
-                timeToLive: 3
+                timeToLive: 10800
             });
             console.log(message);
             message.addData('message', text);
