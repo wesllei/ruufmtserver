@@ -3,6 +3,6 @@
 *.pyo
 .settings/
 .project
-.config.js
-
+config.js
+bin
 node_modules/
