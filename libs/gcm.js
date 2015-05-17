@@ -6,34 +6,32 @@ var Gcm = function () {
     this.sender = new GcmCore.Sender(config.gcm.apiKey);
 }
 
-Gcm.prototype.send = function (text) {
+Gcm.prototype.send = function (text,collapseKey) {
     var scope = this;
-    var user = new User();
+    var user = new User({});
     user.getAll(function (resul) {
-        
-        var usersIds = [];
-        while (resul.length > 0) {
-
-            usersIds.push(resul[0].key);
-            resul.shift();
-        }
-        
-        while (usersIds.length > 0) {
-            var usersList = usersIds.splice(0, 1000);
-            var message = new GcmCore.Message({
-                collapseKey: 'demo',
-                delayWhileIdle: true,
-                timeToLive: 10800
-            });
-            console.log(message);
-            message.addData('message', text);
-            scope.sender.send(message, usersList, 10, function (err, result) {
-                console.log('qualquer coisa');
-                if (err) console.error(err);
-                else console.log(result);
-            });
+        for (i = 0; i < resul.length; i++) {
+            scope.sendToDevice(text,resul[i].keyuser,collapseKey)
         }
     });
 }
-
+Gcm.prototype.sendToDevice = function(text, keyuser,collapseKey) {
+    var message = new GcmCore.Message({
+        collapseKey:  collapseKey,
+        delayWhileIdle: true,
+        timeToLive: 10800,
+        data: {
+            message: text
+        }
+    });
+    this.sender.sendNoRetry(message, keyuser, function (err, result) {
+        if (err) console.error(err);
+        else{
+            if(result.results[0].registration_id != NaN && result.results[0].registration_id != null){
+                var user = new User({keyuser:keyuser});
+                user.updateIfNotExist(result.results[0].registration_id);
+            }
+        } 
+    });
+}
 module.exports = Gcm;

@@ -1,11 +1,11 @@
 var config = require('../config');
 var mysql = require('mysql');
 
-function User() {
-    this.id = "";
-    this.key = "";
-    this.last_send = null;
-    this.notify = true;
+function User(data) {
+    this.id = data.id ? data.id : "";
+    this.keyuser = data.keyuser ? data.keyuser : "";
+    this.last_send = data.last_send ? data.last_send : null;
+    this.notify = data.notify ? data.notify : true;
 
     this.dbCon = mysql.createConnection({
         host: config.db.host,
@@ -18,7 +18,7 @@ function User() {
 User.prototype.save = function (callback) {
     var context = this;
     var query = this.dbCon.query('SELECT * FROM user WHERE ?', {
-        key: this.key
+        keyuser: this.keyuser
     }, function (err, result) {
         console.log(err)
         if (result.length < 1) {
@@ -41,7 +41,7 @@ User.prototype.save = function (callback) {
 
 User.prototype.getPureData = function (date) {
     var pure = {
-        key: this.key,
+        keyuser: this.keyuser,
         last_send: this.last_send,
         notify: this.notify,
     }
@@ -53,11 +53,35 @@ User.prototype.getAll = function (callback) {
     context.dbCon.query('SELECT * FROM user', function (err, result) {
         if (err) {
             console.log(err);
-            callback([])
-        } else {
-            callback(result);
         }
+        callback(result);
     })
     context.dbCon.end(function (err) {});
+}
+User.prototype.updateIfNotExist = function (newkeyuser) {
+    var context = this;
+    context.dbCon.query('SELECT * FROM user WHERE keyuser = ?', [newkeyuser], function (err, result) {
+        if (err) {
+            console.log("65: " + err);
+        }
+        console.log(result);
+        if (result != null && result.length > 0) {
+            query = context.dbCon.query('DELETE FROM user WHERE keyuser = ?', [context.keyuser], function (err, result) {
+                if (err) {
+                    console.log();
+                }
+            })
+            console.log(query.sql);
+        } else {
+            context.dbCon.query('UPDATE user SET keyuser = ? WHERE keyuser = ?', [newkeyuser, context.keyuser], function (err, result) {
+                if (err) {
+                    console.log("76: "+err);
+                }
+            })
+            console.log(context.dbCon.query.sql)
+        }
+        context.dbCon.end(function (err) {});
+    })
+    
 }
 module.exports = User;

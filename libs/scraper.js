@@ -134,11 +134,13 @@ Scraper.prototype.processTable = function (table, meal, tDate) {
 }
 
 Scraper.prototype.notify = function() {
-    console.log("bacon");
     this.isNotify = false;
     var GcmCore = require('./gcm');
     var gcm = new GcmCore();
-    gcm.send("Confira o novo cardápio.");
-
+    var msg = {}
+    msg.lunch = this.lunch.getPureData();
+    msg.dinner = this.dinner.getPureData();
+    msg.saturday = this.saturday.getPureData();
+    gcm.send(msg,"mealUpdate");
 }
 module.exports = Scraper;

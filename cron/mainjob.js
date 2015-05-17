@@ -15,9 +15,7 @@ var mainjob = function () {
         request(options, function (error, response, body) {
             if (!error && response.statusCode == 200) {
                 var scrape = new Scraper(body);
-                console.log("aqui");
                 scrape.proccess();
-                console.log("aqui2");
             }
         });
     }, null, true, null);
