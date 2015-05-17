@@ -4,7 +4,6 @@ var mysql = require('mysql');
 function User(data) {
     this.id = data.id ? data.id : "";
     this.keyuser = data.keyuser ? data.keyuser : "";
-    this.last_send = data.last_send ? data.last_send : null;
     this.notify = data.notify ? data.notify : true;
 
     this.dbCon = mysql.createConnection({
@@ -34,6 +33,19 @@ User.prototype.save = function (callback) {
                     }
                 }
             })
+        }else{
+            context.dbCon.query('UPDATE user SET updated=now() WHERE keyuser=?', [context.keyuser], function (err, result) {
+                if (err) {
+                    console.log(err);
+                    callback(false)
+                } else {
+                    if (result.affectedRows > 0) {
+                        callback(true);
+                    } else {
+                        callback(false);
+                    }
+                }
+            })
         }
         context.dbCon.end(function (err) {});
     });
@@ -42,7 +54,6 @@ User.prototype.save = function (callback) {
 User.prototype.getPureData = function (date) {
     var pure = {
         keyuser: this.keyuser,
-        last_send: this.last_send,
         notify: this.notify,
     }
     return pure;
