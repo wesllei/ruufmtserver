@@ -1,8 +1,8 @@
 var config = {
     db: {
-        host: '127.5.167.2',
-        user: 'adminrRH4x1R',
-        pass: '4DppeyDxGSWM',
+        host: '',
+        user: '',
+        pass: '',
         db: 'ruufmt'
     },
     sc: {
@@ -14,7 +14,7 @@ var config = {
         htmlEncoding: "utf-8"
     },
     gcm:{
-        apiKey:'AIzaSyDYTD1aoif4g__MVAtgTjAtczRjfdRvj5Q'
+        apiKey:''
     }
 }
 module.exports = config;
